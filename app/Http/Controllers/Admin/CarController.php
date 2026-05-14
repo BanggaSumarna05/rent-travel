@@ -8,10 +8,26 @@ use Illuminate\Http\Request;
 
 class CarController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $cars = Car::latest()->paginate(10);
-        return view('admin.cars.index', compact('cars'));
+        $query = Car::latest();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('brand', 'like', "%{$search}%")
+                  ->orWhere('category', 'like', "%{$search}%");
+            });
+        }
+
+        $cars = $query->paginate(10)->withQueryString();
+        
+        $totalCars = Car::count();
+        $totalActive = Car::where('status', 'active')->count();
+        $totalFeatured = Car::where('is_featured', true)->count();
+
+        return view('admin.cars.index', compact('cars', 'totalCars', 'totalActive', 'totalFeatured'));
     }
 
     public function create()
@@ -26,6 +42,7 @@ class CarController extends Controller
             'brand' => 'required|string|max:255',
             'category' => 'required|in:lepas_kunci,with_driver,carter_drop',
             'price_per_day' => 'required|numeric',
+            'price_per_month' => 'nullable|numeric',
             'transmission' => 'required|string',
             'passenger_capacity' => 'required|integer',
             'fuel_type' => 'required|string',
@@ -33,14 +50,23 @@ class CarController extends Controller
             'description' => 'nullable|string',
             'is_featured' => 'boolean',
             'status' => 'required|in:active,inactive',
-            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048'
+            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'videos.*' => 'nullable|file|mimes:mp4,mov,ogg,qt|max:20480'
         ]);
 
         $car = Car::create($validated);
+        
+        \App\Models\ActivityLog::log('Tambah Mobil', 'Manajemen Mobil', "Menambahkan mobil baru: {$car->name}");
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $car->addMedia($image)->toMediaCollection('cars');
+            }
+        }
+
+        if ($request->hasFile('videos')) {
+            foreach ($request->file('videos') as $video) {
+                $car->addMedia($video)->toMediaCollection('videos');
             }
         }
 
@@ -59,6 +85,7 @@ class CarController extends Controller
             'brand' => 'required|string|max:255',
             'category' => 'required|in:lepas_kunci,with_driver,carter_drop',
             'price_per_day' => 'required|numeric',
+            'price_per_month' => 'nullable|numeric',
             'transmission' => 'required|string',
             'passenger_capacity' => 'required|integer',
             'fuel_type' => 'required|string',
@@ -66,14 +93,24 @@ class CarController extends Controller
             'description' => 'nullable|string',
             'is_featured' => 'boolean',
             'status' => 'required|in:active,inactive',
-            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048'
+            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'videos.*' => 'nullable|file|mimes:mp4,mov,ogg,qt|max:20480'
         ]);
 
+        $oldName = $car->name;
         $car->update($validated);
+        
+        \App\Models\ActivityLog::log('Update Mobil', 'Manajemen Mobil', "Memperbarui data mobil: {$oldName} -> {$car->name}");
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $car->addMedia($image)->toMediaCollection('cars');
+            }
+        }
+
+        if ($request->hasFile('videos')) {
+            foreach ($request->file('videos') as $video) {
+                $car->addMedia($video)->toMediaCollection('videos');
             }
         }
 
@@ -82,7 +119,11 @@ class CarController extends Controller
 
     public function destroy(Car $car)
     {
+        $name = $car->name;
         $car->delete();
+        
+        \App\Models\ActivityLog::log('Hapus Mobil', 'Manajemen Mobil', "Menghapus mobil: {$name}");
+
         return redirect()->route('admin.cars.index')->with('success', 'Mobil berhasil dihapus.');
     }
 }

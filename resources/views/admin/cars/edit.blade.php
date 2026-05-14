@@ -1,18 +1,22 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Data Mobil: ' . $car->name)
+@section('title', 'Edit Data Unit: ' . $car->name)
 
 @section('content')
-    <div class="max-w-4xl space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
+    <div class="max-w-4xl space-y-10 animate-fade-in">
         <div class="flex items-center justify-between">
             <a href="{{ route('admin.cars.index') }}"
-                class="flex items-center gap-3 text-slate-400 hover:text-slate-800 transition-colors font-bold text-sm">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
-                    </path>
-                </svg>
+                class="flex items-center gap-3 text-slate-400 hover:text-slate-900 transition-colors font-black text-[10px] uppercase tracking-[0.2em] group">
+                <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </div>
                 Kembali ke Daftar
             </a>
+            <div class="px-6 py-2 bg-slate-900 rounded-full border border-white/5 shadow-xl shadow-slate-950/10">
+                <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest italic">ID Armada: #{{ str_pad($car->id, 5, '0', STR_PAD_LEFT) }}</span>
+            </div>
         </div>
 
         <form action="{{ route('admin.cars.update', $car) }}" method="POST" enctype="multipart/form-data"
@@ -21,228 +25,276 @@
             @method('PUT')
 
             <!-- General Info Section -->
-            <div class="bg-white rounded-[3rem] p-12 shadow-sm border border-gray-100">
-                <h3 class="text-xl font-black text-slate-800 mb-10 flex items-center gap-4">
-                    <div class="w-1.5 h-6 bg-teal-500 rounded-full"></div>
-                    Informasi Dasar
+            <div class="bg-white rounded-[3rem] p-10 lg:p-14 shadow-sm border border-slate-100 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-slate-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:bg-amber-50 transition-colors duration-1000"></div>
+                
+                <h3 class="text-xl font-black text-slate-900 mb-12 flex items-center gap-5 relative z-10 uppercase tracking-tighter italic">
+                    <div class="w-1.5 h-8 bg-amber-500 rounded-full shadow-lg shadow-amber-500/50"></div>
+                    Informasi Dasar <span class="gold-gradient-text ml-2">Unit</span>
                 </h3>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
                     <div class="space-y-4">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Nama
-                            Mobil</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Nama Unit</label>
                         <input type="text" name="name" value="{{ old('name', $car->name) }}"
-                            class="w-full px-8 py-5 bg-gray-50 border border-transparent rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-bold text-sm tracking-tight @error('name') border-red-500 @enderror"
-                            placeholder="Contoh: Mercedes-Benz S-Class" required>
+                            class="w-full px-8 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:outline-none focus:ring-0 focus:border-amber-500/50 transition-all font-bold text-sm tracking-tight @error('name') border-red-500 @enderror"
+                            placeholder="Contoh: Rolls-Royce Phantom" required>
                         @error('name')
-                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">
-                                {{ $message }}</p>
+                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="space-y-4">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Merek</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Merek / Manufaktur</label>
                         <input type="text" name="brand" value="{{ old('brand', $car->brand) }}"
-                            class="w-full px-8 py-5 bg-gray-50 border border-transparent rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-bold text-sm tracking-tight @error('brand') border-red-500 @enderror"
-                            placeholder="Contoh: Mercedes-Benz" required>
+                            class="w-full px-8 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:outline-none focus:ring-0 focus:border-amber-500/50 transition-all font-bold text-sm tracking-tight @error('brand') border-red-500 @enderror"
+                            placeholder="Contoh: Rolls-Royce" required>
                         @error('brand')
-                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">
-                                {{ $message }}</p>
+                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="space-y-4 md:col-span-2">
-                        <label
-                            class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Deskripsi</label>
-                        <textarea name="description" rows="4"
-                            class="w-full px-8 py-6 bg-gray-50 border border-transparent rounded-[2rem] focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-bold text-sm tracking-tight resize-none @error('description') border-red-500 @enderror"
-                            placeholder="Jelaskan kemewahan dan fitur mobil ini..." required>{{ old('description', $car->description) }}</textarea>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Deskripsi & Keunggulan Unit</label>
+                        <textarea name="description" rows="5"
+                            class="w-full px-8 py-6 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:outline-none focus:ring-0 focus:border-amber-500/50 transition-all font-bold text-sm tracking-tight resize-none @error('description') border-red-500 @enderror"
+                            placeholder="Deskripsikan fitur, kenyamanan, dan keunggulan unit ini..." required>{{ old('description', $car->description) }}</textarea>
                         @error('description')
-                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">
-                                {{ $message }}</p>
+                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
             </div>
 
             <!-- Technical Specs Section -->
-            <div class="bg-white rounded-[3rem] p-12 shadow-sm border border-gray-100">
-                <h3 class="text-xl font-black text-slate-800 mb-10 flex items-center gap-4">
-                    <div class="w-1.5 h-6 bg-blue-500 rounded-full"></div>
-                    Spesifikasi Teknis & Harga
+            <div class="bg-white rounded-[3rem] p-10 lg:p-14 shadow-sm border border-slate-100 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-slate-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 group-hover:bg-slate-100 transition-colors duration-1000"></div>
+
+                <h3 class="text-xl font-black text-slate-900 mb-12 flex items-center gap-5 relative z-10 uppercase tracking-tighter italic">
+                    <div class="w-1.5 h-8 bg-slate-900 rounded-full shadow-lg shadow-slate-900/50"></div>
+                    Spesifikasi <span class="gold-gradient-text ml-2">Teknis</span>
                 </h3>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 relative z-10">
                     <div class="space-y-4">
-                        <label
-                            class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Transmisi</label>
-                        <select name="transmission"
-                            class="w-full px-8 py-5 bg-gray-50 border border-transparent rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-bold text-sm tracking-tight appearance-none">
-                            <option value="Automatic"
-                                {{ old('transmission', $car->transmission) == 'Automatic' ? 'selected' : '' }}>Otomatis
-                                (Automatic)</option>
-                            <option value="Manual"
-                                {{ old('transmission', $car->transmission) == 'Manual' ? 'selected' : '' }}>Manual</option>
-                        </select>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Konfigurasi Transmisi</label>
+                        <div class="relative">
+                            <select name="transmission"
+                                class="w-full px-8 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:outline-none focus:ring-0 focus:border-amber-500/50 transition-all font-bold text-sm tracking-tight appearance-none cursor-pointer">
+                                <option value="Automatic" {{ old('transmission', $car->transmission) == 'Automatic' ? 'selected' : '' }}>Otomatis (Automatic)</option>
+                                <option value="Manual" {{ old('transmission', $car->transmission) == 'Manual' ? 'selected' : '' }}>Manual</option>
+                            </select>
+                            <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="space-y-4">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Kategori
-                            Layanan</label>
-                        <select name="category"
-                            class="w-full px-8 py-5 bg-gray-50 border border-transparent rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-bold text-sm tracking-tight appearance-none @error('category') border-red-500 @enderror"
-                            required>
-                            <option value="lepas_kunci"
-                                {{ old('category', $car->category) == 'lepas_kunci' ? 'selected' : '' }}>Lepas Kunci
-                            </option>
-                            <option value="with_driver"
-                                {{ old('category', $car->category) == 'with_driver' ? 'selected' : '' }}>Dengan Driver
-                            </option>
-                            <option value="carter_drop"
-                                {{ old('category', $car->category) == 'carter_drop' ? 'selected' : '' }}>Carter / Drop
-                            </option>
-                        </select>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Varian Layanan</label>
+                        <div class="relative">
+                            <select name="category"
+                                class="w-full px-8 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:outline-none focus:ring-0 focus:border-amber-500/50 transition-all font-bold text-sm tracking-tight appearance-none cursor-pointer @error('category') border-red-500 @enderror"
+                                required>
+                                <option value="lepas_kunci" {{ old('category', $car->category) == 'lepas_kunci' ? 'selected' : '' }}>Layanan Lepas Kunci</option>
+                                <option value="with_driver" {{ old('category', $car->category) == 'with_driver' ? 'selected' : '' }}>Layanan Dengan Driver</option>
+                                <option value="carter_drop" {{ old('category', $car->category) == 'carter_drop' ? 'selected' : '' }}>Layanan Carter / Drop</option>
+                            </select>
+                            <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
                         @error('category')
-                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">
-                                {{ $message }}</p>
+                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="space-y-4">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Kapasitas
-                            Penumpang</label>
-                        <input type="number" name="passenger_capacity"
-                            value="{{ old('passenger_capacity', $car->passenger_capacity) }}"
-                            class="w-full px-8 py-5 bg-gray-50 border border-transparent rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-bold text-sm tracking-tight @error('passenger_capacity') border-red-500 @enderror"
-                            placeholder="Jumlah kursi" required>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Kapasitas Kursi</label>
+                        <input type="number" name="passenger_capacity" value="{{ old('passenger_capacity', $car->passenger_capacity) }}"
+                            class="w-full px-8 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:outline-none focus:ring-0 focus:border-amber-500/50 transition-all font-bold text-sm tracking-tight @error('passenger_capacity') border-red-500 @enderror"
+                            placeholder="Contoh: 4" required>
                         @error('passenger_capacity')
-                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">
-                                {{ $message }}</p>
+                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="space-y-4">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Tipe Bahan
-                            Bakar</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Jenis Bahan Bakar</label>
                         <input type="text" name="fuel_type" value="{{ old('fuel_type', $car->fuel_type) }}"
-                            class="w-full px-8 py-5 bg-gray-50 border border-transparent rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-bold text-sm tracking-tight @error('fuel_type') border-red-500 @enderror"
-                            placeholder="Contoh: Pertamax / Diesel" required>
+                            class="w-full px-8 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:outline-none focus:ring-0 focus:border-amber-500/50 transition-all font-bold text-sm tracking-tight @error('fuel_type') border-red-500 @enderror"
+                            placeholder="Contoh: Pertamax Turbo / Electric" required>
                         @error('fuel_type')
-                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">
-                                {{ $message }}</p>
+                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="space-y-4">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Tahun
-                            Kendaraan</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Manufaktur Tahun</label>
                         <input type="text" name="year" value="{{ old('year', $car->year) }}"
-                            class="w-full px-8 py-5 bg-gray-50 border border-transparent rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-bold text-sm tracking-tight @error('year') border-red-500 @enderror"
-                            placeholder="Contoh: 2023" required>
+                            class="w-full px-8 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:outline-none focus:ring-0 focus:border-amber-500/50 transition-all font-bold text-sm tracking-tight @error('year') border-red-500 @enderror"
+                            placeholder="Contoh: 2024" required>
                         @error('year')
-                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">
-                                {{ $message }}</p>
+                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="space-y-4">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Harga Sewa Per
-                            Hari (Rp)</label>
-                        <input type="number" name="price_per_day" value="{{ old('price_per_day', $car->price_per_day) }}"
-                            class="w-full px-8 py-5 bg-gray-50 border border-transparent rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-bold text-sm tracking-tight @error('price_per_day') border-red-500 @enderror"
-                            placeholder="Harga dalam Rupiah" required>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Harga Sewa / Hari (IDR)</label>
+                        <input type="number" name="price_per_day" value="{{ old('price_per_day', (int)$car->price_per_day) }}"
+                            class="w-full px-8 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:outline-none focus:ring-0 focus:border-amber-500/50 transition-all font-bold text-sm tracking-tight @error('price_per_day') border-red-500 @enderror"
+                            placeholder="Harga sewa eksklusif" required>
                         @error('price_per_day')
-                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">
-                                {{ $message }}</p>
+                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="space-y-4">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Status
-                            Mobil</label>
-                        <select name="status"
-                            class="w-full px-8 py-5 bg-gray-50 border border-transparent rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-bold text-sm tracking-tight appearance-none @error('status') border-red-500 @enderror"
-                            required>
-                            <option value="active" {{ old('status', $car->status) == 'active' ? 'selected' : '' }}>Aktif
-                                Tersedia</option>
-                            <option value="inactive" {{ old('status', $car->status) == 'inactive' ? 'selected' : '' }}>
-                                Tidak Aktif / Maintenance</option>
-                        </select>
-                        @error('status')
-                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">
-                                {{ $message }}</p>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Harga Sewa / Bulan (IDR - Opsional)</label>
+                        <input type="number" name="price_per_month" value="{{ old('price_per_month', $car->price_per_month ? (int)$car->price_per_month : '') }}"
+                            class="w-full px-8 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:outline-none focus:ring-0 focus:border-amber-500/50 transition-all font-bold text-sm tracking-tight @error('price_per_month') border-red-500 @enderror"
+                            placeholder="Contoh: 5000000">
+                        @error('price_per_month')
+                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <div
-                        class="flex items-center gap-6 p-8 bg-gray-50 rounded-[2rem] border border-transparent hover:border-teal-100 transition-all group">
-                        <div class="relative inline-flex items-center cursor-pointer">
+                    <div class="space-y-4">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Status Operasional</label>
+                        <div class="relative">
+                            <select name="status"
+                                class="w-full px-8 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:outline-none focus:ring-0 focus:border-amber-500/50 transition-all font-bold text-sm tracking-tight appearance-none cursor-pointer @error('status') border-red-500 @enderror"
+                                required>
+                                <option value="active" {{ old('status', $car->status) == 'active' ? 'selected' : '' }}>Aktif & Tersedia</option>
+                                <option value="inactive" {{ old('status', $car->status) == 'inactive' ? 'selected' : '' }}>Non-Aktif / Maintenance</option>
+                            </select>
+                            <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+                        @error('status')
+                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="flex items-center gap-6 p-8 bg-slate-900 rounded-[2rem] border border-white/5 shadow-xl shadow-slate-950/20 group/feat">
+                        <div class="relative inline-flex items-center cursor-pointer scale-110">
                             <input type="hidden" name="is_featured" value="0">
                             <input type="checkbox" name="is_featured" value="1" id="is_featured"
                                 class="sr-only peer" {{ old('is_featured', $car->is_featured) ? 'checked' : '' }}>
                             <div
-                                class="w-14 h-8 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-teal-500 shadow-inner">
+                                class="w-14 h-8 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-400 after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-amber-500 peer-checked:after:bg-white shadow-inner">
                             </div>
                         </div>
                         <label for="is_featured"
-                            class="text-xs font-black text-slate-800 uppercase tracking-widest cursor-pointer group-hover:text-teal-600 transition-colors">Tandai
-                            sebagai Mobil Andalan</label>
+                            class="text-xs font-black text-white uppercase tracking-[0.2em] cursor-pointer group-hover/feat:text-amber-400 transition-colors italic">Unit <span class="gold-gradient-text uppercase not-italic">Featured</span></label>
                     </div>
                 </div>
             </div>
 
-            <!-- Current Media Section -->
-            <div class="bg-white rounded-[3rem] p-12 shadow-sm border border-gray-100">
-                <h3 class="text-xl font-black text-slate-800 mb-10 flex items-center gap-4">
-                    <div class="w-1.5 h-6 bg-indigo-500 rounded-full"></div>
-                    Foto Saat Ini
+            <!-- Media Section -->
+            <div class="bg-white rounded-[3rem] p-10 lg:p-14 shadow-sm border border-slate-100 relative overflow-hidden group">
+                <div class="absolute -left-10 -bottom-10 w-48 h-48 bg-amber-50 rounded-full blur-3xl opacity-50 group-hover:scale-150 transition-transform duration-1000"></div>
+
+                <h3 class="text-xl font-black text-slate-900 mb-12 flex items-center gap-5 relative z-10 uppercase tracking-tighter italic">
+                    <div class="w-1.5 h-8 bg-amber-500 rounded-full shadow-lg shadow-amber-500/50"></div>
+                    Galeri <span class="gold-gradient-text ml-2">Media</span>
                 </h3>
 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-                    @foreach ($car->getMedia('cars') as $media)
-                        <div
-                            class="relative group rounded-2xl overflow-hidden aspect-square border border-gray-100 shadow-sm">
-                            <img src="{{ $media->getUrl() }}" class="w-full h-full object-cover">
-                            <div
-                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4 text-center">
-                                <p class="text-[10px] font-black text-white uppercase tracking-widest">Akan terganti jika
-                                    upload foto baru</p>
+                <!-- Images Gallery -->
+                <div class="mb-12 relative z-10">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2 mb-6 block">Foto Unit Saat Ini</label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        @forelse ($car->getMedia('cars') as $media)
+                            <div class="relative group/img rounded-[2rem] overflow-hidden aspect-square border-2 border-slate-100 shadow-sm transition-all duration-700 hover:scale-105 hover:rotate-2">
+                                <img src="{{ $media->getUrl() }}" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center p-6 text-center backdrop-blur-[2px]">
+                                    <p class="text-[8px] font-black text-white uppercase tracking-[0.2em] leading-relaxed">Auto-save</p>
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @empty
+                             <div class="col-span-full py-10 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200 text-center">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Belum ada foto</p>
+                             </div>
+                        @endforelse
+                    </div>
                 </div>
 
-                <div class="space-y-6">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Upload Foto Baru
-                        (Opsional)</label>
-                    <div
-                        class="relative group border-2 border-dashed border-gray-200 rounded-[3rem] p-16 hover:border-teal-500 transition-all bg-gray-50/50 hover:bg-teal-50/10 cursor-pointer text-center">
-                        <input type="file" name="images[]" id="images"
-                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" multiple accept="image/*">
-                        <div class="flex flex-col items-center">
-                            <div
-                                class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center text-teal-600 shadow-xl border border-teal-50 group-hover:scale-110 transition-transform mb-6">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 4v16m8-8H4"></path>
-                                </svg>
+                <!-- Videos Gallery -->
+                <div class="mb-12 relative z-10">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2 mb-6 block">Video Unit Saat Ini</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        @forelse ($car->getMedia('videos') as $media)
+                            <div class="relative group/vid rounded-[2rem] overflow-hidden aspect-video border-2 border-slate-100 shadow-sm bg-slate-900">
+                                <video src="{{ $media->getUrl() }}" class="w-full h-full object-cover" controls></video>
                             </div>
-                            <p class="text-sm font-black text-slate-800 uppercase tracking-widest mb-2">Ganti Foto Mobil
-                            </p>
-                            <p class="text-xs font-bold text-slate-400">Pilih foto jika ingin mengganti yang lama</p>
-                        </div>
+                        @empty
+                             <div class="col-span-full py-10 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200 text-center">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Belum ada video</p>
+                             </div>
+                        @endforelse
                     </div>
-                    @error('images.*')
-                        <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">{{ $message }}
-                        </p>
-                    @enderror
+                </div>
+
+                <!-- Upload New Media -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10 pt-10 border-t border-slate-100">
+                    <div class="space-y-6">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Tambah Foto Baru</label>
+                        <div class="relative group border-4 border-dashed border-slate-100 rounded-[3rem] p-10 hover:border-amber-500/50 transition-all bg-slate-50/50 hover:bg-amber-50/10 cursor-pointer text-center">
+                            <input type="file" name="images[]" id="images"
+                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" multiple accept="image/*">
+                            <div class="flex flex-col items-center">
+                                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-amber-500 shadow-xl border border-slate-50 group-hover:scale-110 transition-transform mb-4">
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                </div>
+                                <p class="text-[10px] font-black text-slate-900 uppercase tracking-[0.2em] mb-1">Unggah Foto Baru</p>
+                                <p class="text-[8px] font-bold text-slate-400 italic">JPG/PNG (Max 2MB)</p>
+                            </div>
+                        </div>
+                        @error('images.*')
+                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="space-y-6">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Tambah Video Baru</label>
+                        <div class="relative group border-4 border-dashed border-slate-100 rounded-[3rem] p-10 hover:border-amber-500/50 transition-all bg-slate-50/50 hover:bg-amber-50/10 cursor-pointer text-center">
+                            <input type="file" name="videos[]" id="videos"
+                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" multiple accept="video/*">
+                            <div class="flex flex-col items-center">
+                                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-amber-500 shadow-xl border border-slate-50 group-hover:scale-110 transition-transform mb-4">
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <p class="text-[10px] font-black text-slate-900 uppercase tracking-[0.2em] mb-1">Unggah Video Baru</p>
+                                <p class="text-[8px] font-bold text-slate-400 italic">MP4/MOV (Max 20MB)</p>
+                            </div>
+                        </div>
+                        @error('videos.*')
+                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
             </div>
 
             <button type="submit"
-                class="w-full py-8 bg-teal-500 text-white rounded-[2.5rem] font-black text-xl tracking-widest uppercase hover:bg-slate-900 transition-all shadow-xl shadow-teal-500/20 active:scale-95 duration-500">
-                Perbarui Data Mobil
+                class="w-full py-8 bg-slate-900 text-amber-400 rounded-[3rem] font-black text-xl tracking-[0.3em] uppercase hover:bg-amber-500 hover:text-white transition-all shadow-2xl shadow-slate-950/20 active:scale-95 duration-700 border border-white/5 relative overflow-hidden group">
+                <span class="relative z-10">Simpan Perubahan Unit</span>
+                <div class="absolute inset-0 bg-gradient-to-r from-amber-600 to-amber-400 translate-y-full group-hover:translate-y-0 transition-transform duration-700"></div>
             </button>
         </form>
     </div>
+
+    <style>
+        .animate-fade-in {
+            animation: luxuryFadeIn 1s cubic-bezier(0, 0, 0.2, 1);
+        }
+        @keyframes luxuryFadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 @endsection

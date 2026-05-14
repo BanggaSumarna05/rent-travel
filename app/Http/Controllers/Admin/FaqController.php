@@ -8,10 +8,23 @@ use Illuminate\Http\Request;
 
 class FaqController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $faqs = Faq::latest()->paginate(10);
-        return view('admin.faqs.index', compact('faqs'));
+        $query = Faq::latest();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('question', 'like', "%{$search}%")
+                  ->orWhere('answer', 'like', "%{$search}%");
+            });
+        }
+
+        $faqs = $query->paginate(10)->withQueryString();
+        
+        $totalFaqs = Faq::count();
+
+        return view('admin.faqs.index', compact('faqs', 'totalFaqs'));
     }
 
     public function create()
@@ -28,7 +41,7 @@ class FaqController extends Controller
 
         Faq::create($validated);
 
-        return redirect()->route('admin.faqs.index')->with('success', 'FAQ created successfully.');
+        return redirect()->route('admin.faqs.index')->with('success', 'FAQ berhasil ditambahkan.');
     }
 
     public function edit(Faq $faq)
@@ -45,12 +58,12 @@ class FaqController extends Controller
 
         $faq->update($validated);
 
-        return redirect()->route('admin.faqs.index')->with('success', 'FAQ updated successfully.');
+        return redirect()->route('admin.faqs.index')->with('success', 'FAQ berhasil diperbarui.');
     }
 
     public function destroy(Faq $faq)
     {
         $faq->delete();
-        return redirect()->route('admin.faqs.index')->with('success', 'FAQ deleted successfully.');
+        return redirect()->route('admin.faqs.index')->with('success', 'FAQ berhasil dihapus.');
     }
 }

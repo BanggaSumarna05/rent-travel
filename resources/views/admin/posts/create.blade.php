@@ -79,8 +79,9 @@
                                             </svg>
                                         </div>
                                         <span
-                                            class="text-xs font-bold text-slate-400 group-hover:text-teal-600 transition-colors uppercase tracking-widest">Pilih
+                                            class="text-[10px] font-black text-slate-400 group-hover:text-teal-600 transition-colors uppercase tracking-widest mb-1">Pilih
                                             Gambar</span>
+                                        <span class="text-[9px] font-bold text-slate-400 italic">JPG/PNG (Max 2MB)</span>
                                     </div>
                                 </label>
                             </div>

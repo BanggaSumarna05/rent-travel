@@ -8,10 +8,24 @@ use Illuminate\Http\Request;
 
 class MotorcycleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $motorcycles = Motorcycle::latest()->paginate(10);
-        return view('admin.motorcycles.index', compact('motorcycles'));
+        $query = Motorcycle::latest();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('brand', 'like', "%{$search}%");
+            });
+        }
+
+        $motorcycles = $query->paginate(10)->withQueryString();
+
+        $totalMotorcycles = Motorcycle::count();
+        $totalActive = Motorcycle::where('status', 'active')->count();
+
+        return view('admin.motorcycles.index', compact('motorcycles', 'totalMotorcycles', 'totalActive'));
     }
 
     public function create()
@@ -25,17 +39,26 @@ class MotorcycleController extends Controller
             'name' => 'required|string|max:255',
             'brand' => 'required|string|max:255',
             'price_per_day' => 'required|numeric',
+            'price_per_month' => 'nullable|numeric',
             'engine_capacity' => 'required|string',
             'description' => 'nullable|string',
             'status' => 'required|in:active,inactive',
-            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048'
+            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'videos.*' => 'nullable|file|mimes:mp4,mov,ogg,qt|max:20480'
         ]);
 
         $motorcycle = Motorcycle::create($validated);
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $motorcycle->addMedia($image)->toMediaCollection('motorcycles');
+
+            $motorcycle->addMedia($image)->toMediaCollection('motorcycles');
+            }
+        }
+
+        if ($request->hasFile('videos')) {
+            foreach ($request->file('videos') as $video) {
+                $motorcycle->addMedia($video)->toMediaCollection('videos');
             }
         }
 
@@ -53,10 +76,12 @@ class MotorcycleController extends Controller
             'name' => 'required|string|max:255',
             'brand' => 'required|string|max:255',
             'price_per_day' => 'required|numeric',
+            'price_per_month' => 'nullable|numeric',
             'engine_capacity' => 'required|string',
             'description' => 'nullable|string',
             'status' => 'required|in:active,inactive',
-            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048'
+            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'videos.*' => 'nullable|file|mimes:mp4,mov,ogg,qt|max:20480'
         ]);
 
         $motorcycle->update($validated);
@@ -64,6 +89,12 @@ class MotorcycleController extends Controller
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $motorcycle->addMedia($image)->toMediaCollection('motorcycles');
+            }
+        }
+
+        if ($request->hasFile('videos')) {
+            foreach ($request->file('videos') as $video) {
+                $motorcycle->addMedia($video)->toMediaCollection('videos');
             }
         }
 

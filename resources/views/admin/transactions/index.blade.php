@@ -1,181 +1,258 @@
 @extends('layouts.admin')
 
-@section('title', 'Daftar Transaksi')
+@section('title', 'Manajemen Transaksi')
 
 @section('content')
-    <div class="space-y-10 animate-fade-in">
+    <div class="space-y-8 animate-fade-in">
         <!-- Header Section -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-                <h2 class="text-3xl font-black text-slate-800 tracking-tight leading-tight font-heading">
-                    Daftar Transaksi & Booking
-                </h2>
-                <p class="text-slate-500 font-semibold mt-1">Kelola semua pemesanan layanan Anda di sini.</p>
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/10 border border-white/5">
+                    <i class="fa-solid fa-file-invoice-dollar text-xl text-[#D4AF37]"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-tight uppercase">
+                        Monitoring <span class="gold-gradient-text italic">Transaksi</span>
+                    </h2>
+                    <p class="text-slate-500 font-semibold text-sm italic">
+                        Kelola data transaksi dan status pemesanan layanan.
+                    </p>
+                </div>
             </div>
-
-            <div class="flex items-center gap-3">
-                @if (method_exists(\App\Http\Controllers\Admin\TransactionController::class, 'create'))
-                    <a href="{{ route('admin.transactions.create') }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-xl font-bold hover:bg-amber-600 transition">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Tambah Transaksi
+            
+            <div class="flex flex-wrap gap-4 w-full md:w-auto">
+                <div class="flex gap-2 w-full md:w-auto">
+                     <a href="{{ route('admin.transactions.export.excel', request()->query()) }}" 
+                        class="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-5 py-4 bg-emerald-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20">
+                        <i class="fa-solid fa-file-excel"></i>
+                        Excel
                     </a>
-                @else
-                    <button type="button" onclick="alert('Fitur tambah transaksi belum tersedia.')"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold"
-                        title="Belum tersedia">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Tambah Transaksi
-                    </button>
-                @endif
+                    <a href="{{ route('admin.transactions.export.pdf', request()->query()) }}" 
+                        class="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-5 py-4 bg-red-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-red-700 transition-all shadow-lg shadow-red-600/20">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        PDF
+                    </a>
+                </div>
+                <a href="{{ route('admin.transactions.create') }}"
+                    class="inline-flex items-center gap-3 px-6 py-4 bg-slate-900 text-amber-400 rounded-2xl font-bold text-sm hover:bg-amber-500 hover:text-white hover:-translate-y-1 transition-all duration-300 shadow-xl shadow-slate-900/10 w-full md:w-auto justify-center group border border-white/5">
+                    <i class="fa-solid fa-plus group-hover:rotate-90 transition-transform duration-300"></i>
+                    Input Manual
+                </a>
             </div>
         </div>
 
-        <!-- Table Card -->
-        <div class="bg-white rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
-            <div class="overflow-x-auto">
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-slate-50 rounded-full group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
+                <div class="flex items-center gap-4 relative z-10">
+                    <div class="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/20 border border-white/5">
+                        <i class="fa-solid fa-receipt text-xl text-[#D4AF37]"></i>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5">Total Pesanan</div>
+                        <div class="text-xl font-black text-slate-900 tracking-tight">{{ $totalTransactions }} <span class="text-xs text-slate-400">Pesanan</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-amber-50 rounded-full group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
+                <div class="flex items-center gap-4 relative z-10">
+                    <div class="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/20">
+                        <i class="fa-solid fa-clock text-xl text-white"></i>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5">Menunggu</div>
+                        <div class="text-xl font-black text-slate-900 tracking-tight">{{ $pendingTransactions }} <span class="text-xs text-slate-400">Pesanan</span></div>
+                    </div>
+                </div>
+            </div>
+             <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-50 rounded-full group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
+                <div class="flex items-center gap-4 relative z-10">
+                    <div class="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                        <i class="fa-solid fa-check-double text-xl text-white"></i>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5">Dikonfirmasi</div>
+                        <div class="text-xl font-black text-slate-900 tracking-tight">{{ $confirmedTransactions }} <span class="text-xs text-slate-400">Pesanan</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-50 rounded-full group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
+                <div class="flex items-center gap-4 relative z-10">
+                    <div class="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                        <i class="fa-solid fa-money-bill-trend-up text-xl text-white"></i>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5">Estimasi Omzet</div>
+                        <div class="text-lg font-black text-slate-900 tracking-tight italic">Rp {{ number_format($totalRevenue,0,',','.') }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-[2.5rem] border border-slate-100 shadow-sm">
+            <form action="{{ route('admin.transactions.index') }}" method="GET" class="flex flex-col lg:flex-row gap-4">
+                <!-- Search Box -->
+                <div class="relative flex-1">
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        placeholder="Cari pelanggan, layanan, atau no. HP..."
+                        class="w-full bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-amber-500/20 text-sm font-bold placeholder-slate-400 py-4 pl-12 transition-all">
+                    <i class="fa-solid fa-magnifying-glass text-slate-400 absolute left-4 top-1/2 -translate-y-1/2"></i>
+                </div>
+
+                <!-- Filters -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 lg:w-auto">
+                    <!-- Month -->
+                    <select name="month" class="bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-amber-500/20 text-xs font-black uppercase py-4 px-4 appearance-none cursor-pointer">
+                        <option value="">Bulan (Semua)</option>
+                        @foreach(range(1, 12) as $m)
+                            <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
+                                {{ \Carbon\Carbon::create()->month($m)->isoFormat('MMMM') }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <!-- Year -->
+                    <select name="year" class="bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-amber-500/20 text-xs font-black uppercase py-4 px-4 appearance-none cursor-pointer">
+                        <option value="">Tahun (Semua)</option>
+                        @foreach($availableYears as $year)
+                            <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                        @endforeach
+                    </select>
+
+                    <!-- Status -->
+                    <select name="status" class="bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-amber-500/20 text-xs font-black uppercase py-4 px-4 appearance-none cursor-pointer">
+                        <option value="">Status (Semua)</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Menunggu</option>
+                        <option value="confirmed" {{ request('status') == 'confirmed' ? 'selected' : '' }}>Dikonfirmasi</option>
+                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Selesai</option>
+                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
+                    </select>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-2">
+                        <button type="submit" class="flex-1 bg-slate-900 text-amber-500 rounded-2xl hover:bg-amber-500 hover:text-white transition-all shadow-lg active:scale-95">
+                            <i class="fa-solid fa-filter"></i>
+                        </button>
+                        @if(request()->anyFilled(['search', 'month', 'year', 'status']))
+                            <a href="{{ route('admin.transactions.index') }}" class="flex-1 inline-flex items-center justify-center bg-slate-100 text-slate-400 rounded-2xl hover:bg-slate-200 transition-all border border-slate-200 active:scale-95">
+                                <i class="fa-solid fa-rotate-left"></i>
+                            </a>
+                        @endif
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Table Section -->
+        <div class="bg-white rounded-[3.5rem] shadow-sm border border-slate-100 overflow-hidden">
+            <!-- Desktop Table View -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="border-b border-gray-50">
-                            <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Pelanggan
-                            </th>
-                            <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Layanan
-                            </th>
-                            <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Waktu Sewa
-                            </th>
-                            <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Total
-                                Harga</th>
-                            <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status
-                            </th>
-                            <th
-                                class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
-                                Aksi</th>
+                        <tr class="bg-slate-50/50 text-slate-400">
+                            <th class="px-8 py-8 text-[10px] font-black uppercase tracking-[0.2em]">Data Pelanggan</th>
+                            <th class="px-8 py-8 text-[10px] font-black uppercase tracking-[0.2em]">Layanan & Unit</th>
+                            <th class="px-8 py-8 text-[10px] font-black uppercase tracking-[0.2em]">Periode</th>
+                            <th class="px-8 py-8 text-[10px] font-black uppercase tracking-[0.2em]">Total Tagihan</th>
+                            <th class="px-8 py-8 text-[10px] font-black uppercase tracking-[0.2em]">Status</th>
+                            <th class="px-8 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-right">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-50">
-                        @forelse($transactions as $transaction)
-                            <tr class="group hover:bg-slate-50 transition-colors">
-                                <td class="px-8 py-6">
-                                    <div class="flex flex-col">
-                                        <span
-                                            class="text-sm font-black text-slate-800">{{ $transaction->customer_name }}</span>
-                                        <span
-                                            class="text-[10px] font-bold text-slate-400 mt-0.5 tracking-tight italic">{{ $transaction->customer_phone }}</span>
+                    <tbody class="divide-y divide-slate-50/50">
+                        @forelse ($transactions as $trx)
+                            <tr class="group hover:bg-slate-50/30 transition-all duration-500">
+                                <td class="px-8 py-10">
+                                    <div class="flex items-center gap-5">
+                                        <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 group-hover:bg-amber-100 group-hover:text-amber-600 transition-colors border border-slate-200">
+                                            <i class="fa-solid fa-user text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-black text-slate-900 group-hover:text-amber-600 transition-colors uppercase leading-none mb-1">{{ $trx->customer_name }}</div>
+                                            <div class="text-[10px] font-bold text-slate-400 italic">{{ $trx->customer_phone }}</div>
+                                        </div>
                                     </div>
                                 </td>
-                                <td class="px-8 py-6">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500">
-                                            @if ($transaction->bookable_type === 'App\Models\Car')
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <circle cx="8" cy="18" r="2" stroke="currentColor"
-                                                        stroke-width="2" fill="none" />
-                                                    <circle cx="16" cy="18" r="2" stroke="currentColor"
-                                                        stroke-width="2" fill="none" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M3 12h13l3-6H3z" />
-                                                </svg>
-                                            @elseif($transaction->bookable_type === 'App\Models\Motorcycle')
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <circle cx="6" cy="19" r="2" stroke="currentColor"
-                                                        stroke-width="2" fill="none" />
-                                                    <circle cx="18" cy="19" r="2" stroke="currentColor"
-                                                        stroke-width="2" fill="none" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M11 17h4l2-5 3-2" />
-                                                </svg>
-                                            @else
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
+                                <td class="px-8 py-10">
+                                    <div class="text-xs font-black text-slate-700 uppercase tracking-tight mb-1">{{ $trx->service_name }}</div>
+                                    <div class="inline-flex px-2 py-0.5 bg-slate-100 rounded text-[9px] font-black text-slate-400 uppercase tracking-[0.1em] italic">{{ $trx->service_category }}</div>
+                                </td>
+                                <td class="px-8 py-10">
+                                    <div class="flex items-center gap-3 text-[10px] font-black text-slate-600 italic">
+                                        <i class="fa-solid fa-calendar-day text-amber-500 text-sm"></i>
+                                        <div>
+                                            {{ $trx->start_date->format('d/m/Y') }}
+                                            @if($trx->end_date)
+                                                <span class="text-slate-300 mx-1">-</span>
+                                                {{ $trx->end_date->format('d/m/Y') }}
                                             @endif
                                         </div>
-                                        <div class="flex flex-col">
-                                            <span class="text-xs font-black text-slate-700 uppercase tracking-wider">
-                                                @php
-                                                    $type = str_replace(
-                                                        'App\\Models\\',
-                                                        '',
-                                                        $transaction->bookable_type,
-                                                    );
-                                                @endphp
-                                                {{ $type }}
-                                            </span>
-                                            <span
-                                                class="text-sm font-bold text-slate-800">{{ $transaction->bookable->name ?? 'N/A' }}</span>
-                                        </div>
                                     </div>
                                 </td>
-                                <td class="px-8 py-6">
-                                    <div class="flex flex-col">
-                                        <span
-                                            class="text-xs font-black text-slate-700 uppercase tracking-widest">{{ $transaction->start_date->format('d M Y') }}</span>
-                                        @if ($transaction->end_date)
-                                            <span class="text-[10px] font-bold text-slate-400">-
-                                                {{ $transaction->end_date->format('d M Y') }}</span>
+                                <td class="px-8 py-10">
+                                    <div class="text-base font-black text-slate-900 tracking-tighter">
+                                        Rp {{ number_format($trx->total_price + $trx->penalty_amount - $trx->discount_amount, 0, ',', '.') }}
+                                        @if($trx->penalty_amount > 0)
+                                            <i class="fa-solid fa-triangle-exclamation text-red-500 text-[10px] ml-1" title="Ada Denda"></i>
+                                        @endif
+                                        @if($trx->discount_amount > 0)
+                                            <i class="fa-solid fa-tag text-emerald-500 text-[10px] ml-1" title="Ada Potongan"></i>
                                         @endif
                                     </div>
+                                    <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mt-1">Total Tagihan</div>
                                 </td>
-                                <td class="px-8 py-6">
-                                    <span class="text-sm font-black text-slate-900 tracking-tight">Rp
-                                        {{ number_format($transaction->total_price, 0, ',', '.') }}</span>
-                                </td>
-                                <td class="px-8 py-6">
+                                <td class="px-8 py-10">
                                     @php
-                                        $statusClasses = [
-                                            'pending' => 'bg-amber-50 text-amber-600 border-amber-100',
+                                        $colors = [
+                                            'pending'   => 'bg-amber-50 text-amber-600 border-amber-100',
                                             'confirmed' => 'bg-blue-50 text-blue-600 border-blue-100',
                                             'completed' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
-                                            'cancelled' => 'bg-rose-50 text-rose-600 border-rose-100',
+                                            'cancelled' => 'bg-red-50 text-red-600 border-red-100',
+                                        ];
+                                        $labels = [
+                                            'pending'   => 'Menunggu',
+                                            'confirmed' => 'Dikonfirmasi',
+                                            'completed' => 'Selesai',
+                                            'cancelled' => 'Dibatalkan',
+                                        ];
+                                        $icons = [
+                                            'pending'   => 'fa-clock',
+                                            'confirmed' => 'fa-circle-check',
+                                            'completed' => 'fa-circle-check',
+                                            'cancelled' => 'fa-circle-xmark',
                                         ];
                                     @endphp
-                                    <span
-                                        class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.15em] border {{ $statusClasses[$transaction->status] ?? 'bg-slate-50 text-slate-600' }}">
-                                        {{ $transaction->status }}
+                                    <span class="px-4 py-2 {{ $colors[$trx->status] }} rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] border flex items-center gap-2 w-fit shadow-sm shadow-slate-900/5">
+                                        <i class="fa-solid {{ $icons[$trx->status] }} {{ $trx->status == 'pending' ? 'animate-pulse' : '' }}"></i>
+                                        {{ $labels[$trx->status] }}
                                     </span>
                                 </td>
-                                <td class="px-8 py-6 text-right">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <a href="{{ route('admin.transactions.show', $transaction) }}"
-                                            class="p-2 text-slate-400 hover:text-amber-500 transition-colors"
-                                            title="Lihat Detail">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
+                                <td class="px-8 py-10">
+                                    <div class="flex justify-end gap-3">
+                                        <a href="{{ route('admin.transactions.invoice', $trx) }}" target="_blank"
+                                            class="w-10 h-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center hover:bg-slate-900 hover:text-emerald-500 transition-all border border-slate-100 shadow-sm"
+                                            title="Cetak Invoice">
+                                            <i class="fa-solid fa-print"></i>
                                         </a>
-                                        <a href="{{ route('admin.transactions.edit', $transaction) }}"
-                                            class="p-2 text-slate-400 hover:text-blue-500 transition-colors"
-                                            title="Edit Status">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
+                                        <a href="{{ route('admin.transactions.show', $trx) }}"
+                                            class="w-10 h-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center hover:bg-slate-900 hover:text-amber-500 transition-all border border-slate-100 shadow-sm"
+                                            title="Detail Transaksi">
+                                            <i class="fa-solid fa-eye"></i>
                                         </a>
-                                        <form action="{{ route('admin.transactions.destroy', $transaction) }}"
-                                            method="POST"
-                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus transaksi ini?')">
-                                            @csrf
-                                            @method('DELETE')
+                                        <a href="{{ route('admin.transactions.edit', $trx) }}"
+                                            class="w-10 h-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center hover:bg-slate-900 hover:text-amber-500 transition-all border border-slate-100 shadow-sm"
+                                            title="Kelola Status">
+                                            <i class="fa-solid fa-file-pen"></i>
+                                        </a>
+                                        <form action="{{ route('admin.transactions.destroy', $trx) }}" method="POST" onsubmit="return confirm('Hapus transaksi ini secara permanen?')">
+                                            @csrf @method('DELETE')
                                             <button type="submit"
-                                                class="p-2 text-slate-400 hover:text-rose-500 transition-colors"
-                                                title="Hapus">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
+                                                class="w-10 h-10 bg-red-50 text-red-500 rounded-xl flex items-center justify-center hover:bg-red-500 hover:text-white hover:scale-110 transition-all border border-red-100 shadow-xl shadow-red-500/10"
+                                                title="Hapus Transaksi">
+                                                <i class="fa-solid fa-trash-can"></i>
                                             </button>
                                         </form>
                                     </div>
@@ -183,18 +260,14 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-8 py-10 text-center">
-                                    <div class="flex flex-col items-center justify-center space-y-3">
-                                        <div
-                                            class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-300">
-                                            <svg class="w-8 h-8" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                            </svg>
-                                        </div>
-                                        <p class="text-sm font-black text-slate-400 uppercase tracking-widest">Belum ada
-                                            transaksi</p>
+                                <td colspan="6" class="px-8 py-40 text-center bg-slate-50/20 relative overflow-hidden group">
+                                    <div class="absolute inset-0 bg-gradient-to-b from-white/0 to-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+                                    <div class="w-32 h-32 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-100 flex items-center justify-center mx-auto mb-10 relative z-10 transition-transform duration-700 group-hover:scale-110 group-hover:rotate-6">
+                                         <i class="fa-solid fa-receipt text-5xl text-slate-200 group-hover:text-amber-200 transition-colors duration-700"></i>
+                                    </div>
+                                    <div class="relative z-10">
+                                        <h3 class="text-3xl font-black text-slate-900 mb-4 tracking-tighter uppercase leading-none">Belum Ada Transaksi</h3>
+                                        <p class="text-slate-500 font-bold mb-12 max-w-sm mx-auto text-sm italic tracking-tight italic">Data pesanan pelanggan akan muncul secara otomatis di sini.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -202,8 +275,64 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Mobile View Redesign -->
+            <div class="md:hidden divide-y divide-slate-100/50">
+                @foreach ($transactions as $trx)
+                    <div class="p-8 hover:bg-slate-50/50 transition-all">
+                        <div class="flex justify-between items-start mb-8">
+                            <div>
+                                <div class="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-2 italic">INV-{{ str_pad($trx->id, 5, '0', STR_PAD_LEFT) }}</div>
+                                <h3 class="text-xl font-black text-slate-900 leading-none mb-1 uppercase tracking-tight">{{ $trx->customer_name }}</h3>
+                                <div class="text-[10px] font-bold text-slate-400 italic tracking-tight">{{ $trx->customer_phone }}</div>
+                            </div>
+                            <span class="px-4 py-2 {{ $colors[$trx->status] }} rounded-2xl text-[8px] font-black uppercase tracking-widest border shadow-sm">
+                                <i class="fa-solid {{ $icons[$trx->status] }} mr-1"></i>
+                                {{ $labels[$trx->status] }}
+                            </span>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-[1.5rem] p-6 mb-8 border border-slate-100 shadow-sm">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Layanan</span>
+                                <span class="text-[11px] font-black text-slate-800 uppercase italic">{{ $trx->service_name }}</span>
+                            </div>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Periode</span>
+                                <span class="text-[10px] font-black text-slate-600 italic">{{ $trx->start_date->format('d M') }} - {{ $trx->end_date ? $trx->end_date->format('d M') : 'H+0' }}</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-4 border-t border-slate-200/50">
+                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Tagihan</span>
+                                <span class="text-lg font-black text-slate-900 tracking-tighter">
+                                    Rp {{ number_format($trx->total_price + $trx->penalty_amount - $trx->discount_amount, 0, ',', '.') }}
+                                    @if($trx->penalty_amount > 0)
+                                        <span class="ml-1 text-[10px] text-red-500 font-black italic">+Denda</span>
+                                    @endif
+                                    @if($trx->discount_amount > 0)
+                                        <span class="ml-1 text-[10px] text-emerald-500 font-black italic">-Disc</span>
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <a href="{{ route('admin.transactions.show', $trx) }}" class="flex-1 py-4 bg-slate-900 text-amber-500 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] text-center shadow-xl shadow-slate-950/20 border border-white/5 active:scale-95 transition-all">
+                                <i class="fa-solid fa-eye mr-2"></i>
+                                Detail
+                            </a>
+                            <form action="{{ route('admin.transactions.destroy', $trx) }}" method="POST" class="flex-none" onsubmit="return confirm('Hapus transaksi ini?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="w-14 h-14 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center border border-red-100 shadow-xl shadow-red-500/10 active:scale-95 transition-all">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
             @if ($transactions->hasPages())
-                <div class="px-8 py-6 border-t border-gray-50 bg-slate-50/50">
+                <div class="px-10 py-12 border-t border-slate-100 bg-slate-50/50">
                     {{ $transactions->links() }}
                 </div>
             @endif
@@ -211,20 +340,12 @@
     </div>
 
     <style>
-        @keyframes fade-in {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         .animate-fade-in {
-            animation: fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: luxuryFadeIn 1s cubic-bezier(0, 0, 0.2, 1);
+        }
+        @keyframes luxuryFadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 @endsection

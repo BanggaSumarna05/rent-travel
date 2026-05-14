@@ -82,8 +82,9 @@
                                             </svg>
                                         </div>
                                         <span
-                                            class="text-xs font-bold text-slate-400 group-hover:text-teal-600 transition-colors uppercase tracking-widest">Ganti
+                                            class="text-[10px] font-black text-slate-400 group-hover:text-teal-600 transition-colors uppercase tracking-widest mb-1">Ganti
                                             Gambar</span>
+                                        <span class="text-[9px] font-bold text-slate-400 italic">JPG/PNG (Max 2MB)</span>
                                     </div>
                                     <div id="changeHint"
                                         class="{{ $post->hasMedia('posts') ? '' : 'hidden' }} mt-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-hover:text-teal-600 transition-colors">

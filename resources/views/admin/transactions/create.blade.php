@@ -34,7 +34,7 @@
             </a>
         </div>
 
-        <form action="{{ route('admin.transactions.store') }}" method="POST"
+        <form action="{{ route('admin.transactions.store') }}" method="POST" enctype="multipart/form-data"
             class="grid grid-cols-1 lg:grid-cols-3 gap-10">
             @csrf
 
@@ -67,12 +67,50 @@
                                 class="w-full px-8 py-5 bg-slate-50 border border-transparent rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all font-bold text-sm tracking-tight text-slate-800"
                                 placeholder="081234567890">
                         </div>
-                        <div class="space-y-2 md:col-span-2">
+                        <div class="space-y-2 lg:col-span-2">
                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Email
                                 (Opsional)</label>
                             <input type="email" name="customer_email" value="{{ old('customer_email') }}"
                                 class="w-full px-8 py-5 bg-slate-50 border border-transparent rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all font-bold text-sm tracking-tight text-slate-800"
                                 placeholder="jaka@example.com">
+                        </div>
+                        
+                        <!-- Form Kontak Darurat -->
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">No. Telepon Darurat</label>
+                            <input type="tel" name="emergency_contact_phone" value="{{ old('emergency_contact_phone') }}"
+                                class="w-full px-8 py-5 bg-slate-50 border border-transparent rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all font-bold text-sm tracking-tight text-slate-800"
+                                placeholder="08xxxxxxxxxx">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Hubungan Darurat (Opsional)</label>
+                            <input type="text" name="emergency_contact_relation" value="{{ old('emergency_contact_relation') }}"
+                                class="w-full px-8 py-5 bg-slate-50 border border-transparent rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all font-bold text-sm tracking-tight text-slate-800"
+                                placeholder="Contoh: Istri / Orang Tua">
+                        </div>
+
+                        <!-- Dokumen Uploads -->
+                        <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Upload KTP (Opsional)</label>
+                                <input type="file" name="doc_ktp" accept="image/*,.pdf"
+                                    class="w-full px-4 py-4 bg-slate-50 border border-transparent rounded-[1.5rem] text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Upload KK (Opsional)</label>
+                                <input type="file" name="doc_kk" accept="image/*,.pdf"
+                                    class="w-full px-4 py-4 bg-slate-50 border border-transparent rounded-[1.5rem] text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Upload NPWP (Opsional)</label>
+                                <input type="file" name="doc_npwp" accept="image/*,.pdf"
+                                    class="w-full px-4 py-4 bg-slate-50 border border-transparent rounded-[1.5rem] text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">KTP Penjamin (Opsional)</label>
+                                <input type="file" name="doc_ktp_penjamin" accept="image/*,.pdf"
+                                    class="w-full px-4 py-4 bg-slate-50 border border-transparent rounded-[1.5rem] text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -108,7 +146,7 @@
                                 class="w-full px-8 py-5 bg-slate-50 border border-transparent rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all font-bold text-sm tracking-tight text-slate-800 appearance-none">
                                 <option value="">-- Melalui Daftar --</option>
                                 <template x-for="service in filteredServices" :key="service.id">
-                                    <option :value="service.id" x-text="service.name"></option>
+                                    <option :value="service.id" x-text="(service.brand ? service.brand + ' ' : '') + service.name + (service.transmission ? ' (' + service.transmission + ')' : '')"></option>
                                 </template>
                             </select>
                         </div>

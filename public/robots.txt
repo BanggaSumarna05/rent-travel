@@ -1,4 +1,42 @@
 User-agent: *
-Allow: /
 
-Sitemap: {{ url('sitemap.xml') }}
+# Izinkan semua halaman publik
+Allow: /
+Allow: /rental-mobil
+Allow: /rental-motor
+Allow: /paket-wisata
+Allow: /tentang-kami
+Allow: /faq
+Allow: /kontak
+Allow: /testimoni
+Allow: /post
+Allow: /kebijakan-privasi
+Allow: /syarat-ketentuan
+Allow: /sitemap.xml
+
+# Blokir halaman pencarian (mencegah duplicate content dari query params)
+Disallow: /pencarian
+Disallow: /pencarian?*
+
+# Blokir parameter filter & sort di halaman listing
+Disallow: /rental-mobil?*
+Disallow: /rental-motor?*
+Disallow: /paket-wisata?*
+
+# Blokir halaman admin & autentikasi
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /login
+Disallow: /register
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /password/*
+Disallow: /verify-email
+Disallow: /confirm-password
+Disallow: /forgot-password
+Disallow: /reset-password
+
+# Blokir file sistem Laravel
+Disallow: /_ignition/*
+
+Sitemap: https://cjarentcar.com/sitemap.xml

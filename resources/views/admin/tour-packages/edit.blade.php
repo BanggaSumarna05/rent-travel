@@ -194,8 +194,9 @@
                                         d="M12 4v16m8-8H4"></path>
                                 </svg>
                             </div>
-                            <p class="text-sm font-black text-slate-800 uppercase tracking-widest mb-2">Ganti Foto Paket
+                            <p class="text-[10px] font-black text-slate-800 uppercase tracking-widest mb-1">Ganti Foto Paket
                             </p>
+                            <p class="text-[9px] font-bold text-slate-400 italic">JPG/PNG (Max 2MB)</p>
                         </div>
                     </div>
                     @error('images.*')

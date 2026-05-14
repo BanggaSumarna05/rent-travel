@@ -6,7 +6,7 @@
 
         <!-- Favicon -->
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-        <title>{{ \App\Models\Setting::get('site_name', 'Rent Travel') }}</title>
+    <title>{{ \App\Models\Setting::get('site_name', 'CJA RENT CAR') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

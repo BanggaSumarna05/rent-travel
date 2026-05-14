@@ -97,6 +97,18 @@
                     </div>
 
                     <div class="space-y-4">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Harga Sewa Per
+                            Bulan (Rp - Opsional)</label>
+                        <input type="number" name="price_per_month" value="{{ old('price_per_month') }}"
+                            class="w-full px-8 py-5 bg-gray-50 border border-transparent rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-bold text-sm tracking-tight @error('price_per_month') border-red-500 @enderror"
+                            placeholder="Contoh: 1500000">
+                        @error('price_per_month')
+                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">
+                                {{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="space-y-4">
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Status
                             Motor</label>
                         <select name="status"
@@ -119,30 +131,49 @@
             <div class="bg-white rounded-[3rem] p-12 shadow-sm border border-gray-100">
                 <h3 class="text-xl font-black text-slate-800 mb-10 flex items-center gap-4">
                     <div class="w-1.5 h-6 bg-indigo-500 rounded-full"></div>
-                    Foto Motor
+                    Media Motor
                 </h3>
 
-                <div class="space-y-6">
-                    <div
-                        class="relative group border-2 border-dashed border-gray-200 rounded-[3rem] p-16 hover:border-blue-500 transition-all bg-gray-50/50 hover:bg-blue-50/10 cursor-pointer text-center">
-                        <input type="file" name="images[]" id="images"
-                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" multiple accept="image/*">
-                        <div class="flex flex-col items-center">
-                            <div
-                                class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center text-blue-600 shadow-xl border border-blue-50 group-hover:scale-110 transition-transform mb-6">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 4v16m8-8H4"></path>
-                                </svg>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                    <div class="space-y-6">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block mb-2">Foto Motor</label>
+                        <div class="relative group border-2 border-dashed border-gray-200 rounded-[2.5rem] p-10 hover:border-blue-500 transition-all bg-gray-50/50 hover:bg-blue-50/10 cursor-pointer text-center">
+                            <input type="file" name="images[]" id="images"
+                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" multiple accept="image/*">
+                            <div class="flex flex-col items-center">
+                                <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-blue-600 shadow-lg border border-blue-50 group-hover:scale-110 transition-transform mb-4">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                </div>
+                                <p class="text-[10px] font-black text-slate-800 uppercase tracking-widest mb-1">Pilih Foto</p>
+                                <p class="text-[9px] font-bold text-slate-400 italic">JPG/PNG (Max 2MB)</p>
                             </div>
-                            <p class="text-sm font-black text-slate-800 uppercase tracking-widest mb-2">Pilih Foto Motor</p>
-                            <p class="text-xs font-bold text-slate-400">Pilih beberapa foto terbaik armada motor Anda</p>
                         </div>
+                        @error('images.*')
+                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
-                    @error('images.*')
-                        <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">{{ $message }}
-                        </p>
-                    @enderror
+
+                    <div class="space-y-6">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block mb-2">Video Motor (Opsional)</label>
+                        <div class="relative group border-2 border-dashed border-gray-200 rounded-[2.5rem] p-10 hover:border-blue-500 transition-all bg-gray-50/50 hover:bg-blue-50/10 cursor-pointer text-center">
+                            <input type="file" name="videos[]" id="videos"
+                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" multiple accept="video/*">
+                            <div class="flex flex-col items-center">
+                                <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-blue-600 shadow-lg border border-blue-50 group-hover:scale-110 transition-transform mb-4">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <p class="text-[10px] font-black text-slate-800 uppercase tracking-widest mb-1">Pilih Video</p>
+                                <p class="text-[9px] font-bold text-slate-400 italic">MP4/MOV (Max 20MB)</p>
+                            </div>
+                        </div>
+                        @error('videos.*')
+                            <p class="text-red-500 text-[10px] font-black uppercase tracking-widest ml-4 mt-2">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
             </div>
 

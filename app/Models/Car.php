@@ -18,6 +18,7 @@ class Car extends Model implements HasMedia
         'slug',
         'category',
         'price_per_day',
+        'price_per_month',
         'transmission',
         'passenger_capacity',
         'fuel_type',
@@ -30,6 +31,7 @@ class Car extends Model implements HasMedia
     protected $casts = [
         'is_featured' => 'boolean',
         'price_per_day' => 'decimal:2',
+        'price_per_month' => 'decimal:2',
     ];
 
     public function sluggable(): array

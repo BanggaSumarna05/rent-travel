@@ -2,17 +2,30 @@
 
 namespace App\Http\Controllers\Admin;
 
-
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::latest()->paginate(10);
-        return view('admin.posts.index', compact('posts'));
+        $query = Post::latest();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('content', 'like', "%{$search}%");
+            });
+        }
+
+        $posts = $query->paginate(10)->withQueryString();
+        
+        $totalPosts = Post::count();
+        $publishedPosts = Post::where('is_published', true)->count();
+
+        return view('admin.posts.index', compact('posts', 'totalPosts', 'publishedPosts'));
     }
 
     public function create()
@@ -32,6 +45,10 @@ class PostController extends Controller
 
         if (!isset($validated['is_published'])) {
             $validated['is_published'] = false;
+        }
+
+        if ($validated['is_published'] && empty($validated['published_at'])) {
+            $validated['published_at'] = now();
         }
 
         $post = Post::create($validated);
@@ -60,6 +77,10 @@ class PostController extends Controller
 
         if (!isset($validated['is_published'])) {
             $validated['is_published'] = false;
+        }
+
+        if ($validated['is_published'] && empty($validated['published_at'])) {
+            $validated['published_at'] = now();
         }
 
         $post->update($validated);

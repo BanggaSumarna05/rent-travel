@@ -5,21 +5,28 @@
 @section('content')
     <div class="max-w-4xl space-y-10 animate-fade-in text-slate-800">
         <!-- Header Section -->
-        <div class="flex items-center gap-4 mb-4">
-            <a href="{{ route('admin.transactions.index') }}"
-                class="p-3 bg-white rounded-xl border border-gray-100 text-slate-400 hover:text-amber-600 hover:border-amber-100 transition-all shadow-sm group">
-                <svg class="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
-                </svg>
-            </a>
-            <div>
-                <h2 class="text-3xl font-black text-slate-800 tracking-tight leading-tight font-heading">
-                    Detail Transaksi <span class="text-amber-500">#{{ $transaction->id }}</span>
-                </h2>
-                <p class="text-slate-500 font-semibold mt-1">Dibuat pada
-                    {{ $transaction->created_at->format('d M Y, H:i') }}</p>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+            <div class="flex items-center gap-4">
+                <a href="{{ route('admin.transactions.index') }}"
+                    class="p-3 bg-white rounded-xl border border-gray-100 text-slate-400 hover:text-amber-600 hover:border-amber-100 transition-all shadow-sm group">
+                    <svg class="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </a>
+                <div>
+                    <h2 class="text-3xl font-black text-slate-800 tracking-tight leading-tight font-heading">
+                        Detail Transaksi <span class="text-amber-500">#{{ $transaction->id }}</span>
+                    </h2>
+                    <p class="text-slate-500 font-semibold mt-1">Dibuat pada
+                        {{ $transaction->created_at->format('d M Y, H:i') }}</p>
+                </div>
             </div>
+            
+            <a href="{{ route('admin.transactions.invoice', $transaction) }}" target="_blank"
+                class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl active:scale-95">
+                <i class="fa-solid fa-print"></i> Cetak Invoice
+            </a>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -32,7 +39,7 @@
                         <div>
                             <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Informasi
                                 Pelanggan</h3>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                            <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
                                 <div class="space-y-1">
                                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Nama Lengkap
                                     </p>
@@ -48,8 +55,63 @@
                                     <p class="text-lg font-black text-slate-800">{{ $transaction->customer_email ?? '-' }}
                                     </p>
                                 </div>
+                                @if($transaction->emergency_contact_phone)
+                                <div class="space-y-1">
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">No. Darurat</p>
+                                    <p class="text-lg font-black text-slate-800">{{ $transaction->emergency_contact_phone }}</p>
+                                    @if($transaction->emergency_contact_relation)
+                                        <p class="text-xs font-bold text-amber-600 uppercase tracking-wider">{{ $transaction->emergency_contact_relation }}</p>
+                                    @endif
+                                </div>
+                                @endif
                             </div>
                         </div>
+
+                        <!-- Dokumen Persyaratan -->
+                        @php
+                            $docs = [
+                                ['key' => 'doc_ktp', 'label' => 'KTP Penyewa', 'icon' => 'fa-id-card'],
+                                ['key' => 'doc_kk', 'label' => 'Kartu Keluarga', 'icon' => 'fa-users'],
+                                ['key' => 'doc_npwp', 'label' => 'NPWP', 'icon' => 'fa-file-invoice'],
+                                ['key' => 'doc_ktp_penjamin', 'label' => 'KTP Penjamin', 'icon' => 'fa-user-shield'],
+                            ];
+                            $hasAnydoc = collect($docs)->some(fn($d) => $transaction->{$d['key']});
+                        @endphp
+                        @if($hasAnydoc)
+                        <div class="pt-10 border-t border-gray-50">
+                            <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Dokumen Persyaratan</h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                @foreach($docs as $doc)
+                                    @if($transaction->{$doc['key']})
+                                    <div class="space-y-2">
+                                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                            <i class="fa-solid {{ $doc['icon'] }} text-amber-500"></i>
+                                            {{ $doc['label'] }}
+                                        </p>
+                                        @php
+                                            $ext = strtolower(pathinfo($transaction->{$doc['key']}, PATHINFO_EXTENSION));
+                                            $docUrl = asset('storage/' . $transaction->{$doc['key']});
+                                        @endphp
+                                        @if(in_array($ext, ['jpg','jpeg','png']))
+                                            <a href="{{ $docUrl }}" target="_blank" class="block group">
+                                                <img src="{{ $docUrl }}"
+                                                    alt="{{ $doc['label'] }}"
+                                                    class="w-full h-24 object-cover rounded-2xl border border-slate-100 group-hover:border-amber-400 transition-all shadow-sm">
+                                                <span class="mt-1 block text-center text-[9px] font-black text-amber-600 uppercase tracking-wider group-hover:underline">Lihat Full</span>
+                                            </a>
+                                        @else
+                                            <a href="{{ $docUrl }}" target="_blank"
+                                                class="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border border-slate-100 hover:border-amber-400 hover:bg-amber-50 transition-all bg-slate-50">
+                                                <i class="fa-solid fa-file-pdf text-2xl text-rose-500"></i>
+                                                <span class="text-[9px] font-black text-slate-500 uppercase tracking-wider">Download PDF</span>
+                                            </a>
+                                        @endif
+                                    </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
 
                         <!-- Service Info -->
                         <div class="pt-10 border-t border-gray-50">
@@ -58,10 +120,12 @@
                             <div class="flex items-start gap-6 mb-8">
                                 <div
                                     class="w-20 h-20 rounded-2xl bg-slate-50 flex items-center justify-center border border-gray-100 overflow-hidden">
-                                    @php $bookable = $transaction->bookable; @endphp
-                                    @if ($bookable && method_exists($bookable, 'getFirstMediaUrl'))
-                                        <img src="{{ $bookable->getFirstMediaUrl(request()->segment(2) ?? 'cars') }}"
-                                            class="w-full h-full object-cover">
+                                    @php
+                                        $bookable = $transaction->bookable;
+                                        $bookableImage = $transaction->bookableImageUrl();
+                                    @endphp
+                                    @if ($bookableImage)
+                                        <img src="{{ $bookableImage }}" class="w-full h-full object-cover">
                                     @else
                                         <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -72,20 +136,16 @@
                                 </div>
                                 <div class="flex-1">
                                     <p class="text-[10px] font-black text-amber-600 uppercase tracking-[0.2em] mb-1">
-                                        {{ str_replace('App\\Models\\', '', $transaction->bookable_type) }}
+                                        {{ $transaction->serviceCategoryLabel() }}
                                     </p>
                                     <h4 class="text-xl font-black text-slate-800 tracking-tight">
-                                        {{ $bookable->name ?? 'N/A' }}</h4>
+                                        {{ $transaction->serviceDisplayName() }}</h4>
                                     <p class="text-sm font-bold text-slate-400 mt-1 italic italic">
-                                        @if ($transaction->bookable_type === 'App\Models\Car')
-                                            {{ $bookable->brand ?? '' }} • {{ $bookable->transmission ?? '' }}
-                                        @elseif($transaction->bookable_type === 'App\Models\Motorcycle')
-                                            {{ $bookable->brand ?? '' }} • {{ $bookable->engine_capacity ?? '' }}cc
-                                        @endif
+                                        {{ $transaction->bookableMeta() ?: 'Booking dari website' }}
                                     </p>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                            <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
                                 <div class="space-y-1">
                                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Tanggal Mulai
                                     </p>
@@ -98,17 +158,29 @@
                                     <p class="text-lg font-black text-slate-800">
                                         {{ $transaction->end_date ? $transaction->end_date->format('d F Y') : '-' }}</p>
                                 </div>
+                                <div class="space-y-1">
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Opsi Driver
+                                    </p>
+                                    <p class="text-lg font-black text-slate-800">
+                                        {{ $transaction->driverOptionLabel() ?? '-' }}</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Lokasi
+                                    </p>
+                                    <p class="text-lg font-black text-slate-800">
+                                        {{ $transaction->locationLabel() ?? '-' }}</p>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Notes Info -->
-                        @if ($transaction->notes)
+                        @if ($transaction->customerNotes())
                             <div class="pt-10 border-t border-gray-50">
                                 <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Catatan
                                     Tambahan</h3>
                                 <div
                                     class="p-6 bg-slate-50 rounded-3xl text-sm font-bold text-slate-600 leading-relaxed italic italic">
-                                    "{!! nl2br(e($transaction->notes)) !!}"
+                                    "{!! nl2br(e($transaction->customerNotes())) !!}"
                                 </div>
                             </div>
                         @endif
@@ -119,14 +191,49 @@
             <!-- Status & Price Column -->
             <div class="space-y-10">
                 <!-- Price Card -->
+                <!-- Price Card -->
                 <div class="bg-slate-900 rounded-[2.5rem] p-10 shadow-xl shadow-slate-200">
-                    <p class="text-[10px] font-black text-amber-500/60 uppercase tracking-widest mb-2">Total Harga</p>
-                    <h3 class="text-3xl font-black text-white tracking-tighter leading-none mb-1">Rp
+                    <p class="text-[10px] font-black text-amber-500/60 uppercase tracking-widest mb-2">Total Layanan Utama</p>
+                    <h3 class="text-3xl font-black text-white tracking-tighter leading-none mb-4">Rp
                         {{ number_format($transaction->total_price, 0, ',', '.') }}</h3>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-4 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        Estimasi Berhasil
-                    </p>
+
+                    @if($transaction->penalty_amount > 0)
+                        <div class="pt-4 border-t border-slate-700">
+                            <p class="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1 flex items-center justify-between">
+                                Sistem Denda
+                                <span class="text-white bg-red-500/20 px-2 py-0.5 rounded text-[8px]">Aktif</span>
+                            </p>
+                            <h4 class="text-xl font-black text-red-400 tracking-tighter mb-2">+ Rp {{ number_format($transaction->penalty_amount, 0, ',', '.') }}</h4>
+                            <p class="text-[10px] font-bold text-slate-400 leading-relaxed italic border-l-2 border-slate-700 pl-2">
+                                {{ $transaction->penalty_details ?: 'Tanpa keterangan' }}
+                            </p>
+                        </div>
+                    @endif
+
+                    @if($transaction->discount_amount > 0)
+                        <div class="pt-4 border-t border-slate-700">
+                            <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1 flex items-center justify-between">
+                                Potongan / Promo
+                                <span class="text-white bg-emerald-500/20 px-2 py-0.5 rounded text-[8px]">Berhasil</span>
+                            </p>
+                            <h4 class="text-xl font-black text-emerald-400 tracking-tighter mb-2">- Rp {{ number_format($transaction->discount_amount, 0, ',', '.') }}</h4>
+                            <p class="text-[10px] font-bold text-slate-400 leading-relaxed italic border-l-2 border-slate-700 pl-2">
+                                {{ $transaction->discount_details ?: 'Potongan harga spesial' }}
+                            </p>
+                        </div>
+                    @endif
+
+                    @if($transaction->penalty_amount > 0 || $transaction->discount_amount > 0)
+                        <div class="pt-4 mt-4 border-t border-slate-700">
+                            <p class="text-[10px] font-black text-amber-500/60 uppercase tracking-widest mb-1">Total Tagihan Akhir</p>
+                            <h3 class="text-2xl font-black text-amber-500 tracking-tighter">Rp {{ number_format($transaction->total_price + $transaction->penalty_amount - $transaction->discount_amount, 0, ',', '.') }}</h3>
+                        </div>
+                    @else
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-4 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            Estimasi Berhasil
+                        </p>
+                    @endif
                 </div>
 
                 <!-- Status Card -->
@@ -191,3 +298,5 @@
         }
     </style>
 @endsection
+
+

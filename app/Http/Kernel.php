@@ -62,6 +62,7 @@ class Kernel extends HttpKernel
 
         // Project role middleware
         'is_admin' => \App\Http\Middleware\IsAdmin::class,
+        'admin' => \App\Http\Middleware\IsAdmin::class,
 
         // Spatie middleware kept under separate aliases to avoid conflicts
         'spatie.permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,

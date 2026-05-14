@@ -8,10 +8,24 @@ use Illuminate\Http\Request;
 
 class TourPackageController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tours = TourPackage::latest()->paginate(10);
-        return view('admin.tour-packages.index', compact('tours'));
+        $query = TourPackage::latest();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $tours = $query->paginate(10)->withQueryString();
+        
+        $totalTours = TourPackage::count();
+        $totalActive = TourPackage::where('status', 'active')->count();
+
+        return view('admin.tour-packages.index', compact('tours', 'totalTours', 'totalActive'));
     }
 
     public function create()

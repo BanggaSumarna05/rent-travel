@@ -3,7 +3,8 @@
 @section('title', 'Edit Status Transaksi #' . $transaction->id)
 
 @section('content')
-    <div class="max-w-4xl space-y-10 animate-fade-in text-slate-800">
+    <div class="max-w-4xl space-y-10 animate-fade-in text-slate-800"
+        x-data="{ status: '{{ old('status', $transaction->status) }}' }">
         <!-- Header Section -->
         <div class="flex items-center gap-4 mb-4">
             <a href="{{ route('admin.transactions.index') }}"
@@ -34,9 +35,11 @@
                         <div class="grid grid-cols-1 gap-4">
                             @foreach (['pending', 'confirmed', 'completed', 'cancelled'] as $status)
                                 <label
-                                    class="relative flex items-center p-6 border-2 rounded-3xl cursor-pointer transition-all duration-300 {{ $transaction->status === $status ? 'border-amber-500 bg-amber-50/30' : 'border-slate-50 hover:border-slate-200' }}">
+                                    class="relative flex items-center p-6 border-2 rounded-3xl cursor-pointer transition-all duration-300"
+                                    :class="status === '{{ $status }}' ? 'border-amber-500 bg-amber-50/30' : 'border-slate-50 hover:border-slate-200'">
                                     <input type="radio" name="status" value="{{ $status }}" class="sr-only"
-                                        {{ $transaction->status === $status ? 'checked' : '' }}>
+                                        x-model="status"
+                                        {{ old('status', $transaction->status) === $status ? 'checked' : '' }}>
                                     <div class="flex items-center gap-4 w-full">
                                         <div
                                             class="w-10 h-10 rounded-xl flex items-center justify-center {{ $status === 'pending'
@@ -86,15 +89,13 @@
                                                             : 'Booking dibatalkan')) }}
                                             </span>
                                         </div>
-                                        @if ($transaction->status === $status)
-                                            <div class="ml-auto">
+                                        <div class="ml-auto" x-show="status === '{{ $status }}'" x-cloak>
                                                 <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd"
                                                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                                         clip-rule="evenodd" />
                                                 </svg>
-                                            </div>
-                                        @endif
+                                        </div>
                                     </div>
                                 </label>
                             @endforeach
@@ -104,6 +105,45 @@
                     <!-- Notes & Info -->
                     <div class="space-y-10">
                         <div class="space-y-6">
+                        <!-- Denda Section -->
+                        <div class="p-8 bg-red-50/50 rounded-[2rem] border border-red-100 shadow-sm space-y-6 mb-6">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center text-red-600">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                </div>
+                                <h4 class="text-[11px] font-black text-red-800 uppercase tracking-widest">Sistem Denda & Keterlambatan</h4>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-4">Nominal Denda (Rp)</label>
+                                    <input type="number" name="penalty_amount" value="{{ old('penalty_amount', (int)$transaction->penalty_amount) }}" class="w-full px-8 py-5 mt-2 bg-white border border-red-200 rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all font-black text-sm tracking-tight text-slate-800" placeholder="0" min="0">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-4">Detail Pelanggaran / Denda</label>
+                                    <textarea name="penalty_details" rows="3" class="w-full px-8 py-5 mt-2 bg-white border border-red-200 rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all font-bold text-sm tracking-tight italic text-slate-800" placeholder="Contoh: Terlambat pengembalian 2 jam, body kendaraan lecet ringan...">{{ old('penalty_details', $transaction->penalty_details) }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Promo & Potongan Section -->
+                        <div class="p-8 bg-emerald-50/50 rounded-[2rem] border border-emerald-100 shadow-sm space-y-6 mb-6">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600">
+                                    <i class="fa-solid fa-tag"></i>
+                                </div>
+                                <h4 class="text-[11px] font-black text-emerald-800 uppercase tracking-widest">Promo & Potongan Harga</h4>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-4">Nominal Potongan (Rp)</label>
+                                    <input type="number" name="discount_amount" value="{{ old('discount_amount', (int)$transaction->discount_amount) }}" class="w-full px-8 py-5 mt-2 bg-white border border-emerald-200 rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all font-black text-sm tracking-tight text-slate-800" placeholder="0" min="0">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-4">Nama Promo / Alasan Potongan</label>
+                                    <input type="text" name="discount_details" value="{{ old('discount_details', $transaction->discount_details) }}" class="w-full px-8 py-5 mt-2 bg-white border border-emerald-200 rounded-[1.5rem] focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all font-bold text-sm tracking-tight text-slate-800" placeholder="Contoh: Promo Ramadhan, Diskon Member...">
+                                </div>
+                            </div>
+                        </div>
                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Catatan
                                 Internal</label>
                             <textarea name="notes" rows="6"

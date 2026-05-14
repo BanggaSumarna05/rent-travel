@@ -8,10 +8,25 @@ use Illuminate\Http\Request;
 
 class TestimonialController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $testimonials = Testimonial::latest()->paginate(10);
-        return view('admin.testimonials.index', compact('testimonials'));
+        $query = Testimonial::latest();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('content', 'like', "%{$search}%")
+                  ->orWhere('occupation', 'like', "%{$search}%");
+            });
+        }
+
+        $testimonials = $query->paginate(10)->withQueryString();
+        
+        $totalTestimonials = Testimonial::count();
+        $totalActive = Testimonial::where('is_active', true)->count();
+
+        return view('admin.testimonials.index', compact('testimonials', 'totalTestimonials', 'totalActive'));
     }
 
     public function create()
@@ -57,6 +72,6 @@ class TestimonialController extends Controller
     public function destroy(Testimonial $testimonial)
     {
         $testimonial->delete();
-        return redirect()->route('admin.testimonials.index')->with('success', 'Testimonial deleted successfully.');
+        return redirect()->route('admin.testimonials.index')->with('success', 'Testimoni berhasil dihapus.');
     }
 }

@@ -1,67 +1,78 @@
 @extends('layouts.frontend')
 
-@section('title', 'Hak Istimewa - FAQ - ' . \App\Models\Setting::get('site_name', 'Rent Travel'))
+@section('title', 'Hak Istimewa - FAQ - ' . \App\Models\Setting::get('site_name', 'CJA RENT CAR'))
+
+@push('schema')
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                @foreach ($faqs as $faq)
+                    {
+                        "@type": "Question",
+                        "name": @json($faq->question),
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": @json($faq->answer)
+                        }
+                    }@if (! $loop->last),@endif
+                @endforeach
+            ]
+        }
+    </script>
+@endpush
 
 @section('content')
-    <!-- Header Section -->
-    <section class="relative pt-32 pb-20 bg-white overflow-hidden">
-        <div
-            class="absolute top-0 right-0 w-[400px] h-[400px] bg-amber-50/50 blur-[100px] rounded-full -mr-48 -mt-48 animate-pulse">
-        </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <x-breadcrumb :items="[['label' => 'FAQ']]" />
-            <div data-aos="fade-down" class="text-center">
-                <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 font-heading tracking-tighter leading-[1]">
-                    Akses <span class="gold-gradient-text">Istimewa</span>
-                </h1>
-                <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed font-medium">
-                    Segala hal yang perlu Anda ketahui tentang layanan elit kami. Jawaban jelas untuk perjalanan yang
-                    lancar.
-                </p>
-            </div>
-        </div>
-    </section>
+    <x-frontend.page-hero
+        :items="[['label' => 'FAQ']]"
+        badge="FAQ Booking"
+        title="Jawaban untuk"
+        highlight="Pertanyaan Umum"
+        description="Baca pertanyaan yang paling sering diajukan sebelum booking rental mobil Tasikmalaya, mulai dari syarat sewa sampai proses pemesanan."
+    />
 
-    <!-- FAQ Grid -->
-    <section class="py-24 bg-gray-50">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="space-y-8">
+    <section class="page-section-large page-section-muted" x-data="{ activeFaq: 0 }">
+        <div class="page-shell-narrow">
+            <div class="section-heading-centered" data-aos="fade-up">
+                <div class="section-kicker">FAQ Rental Mobil Tasikmalaya</div>
+                <h2 class="section-title">Informasi yang paling sering dicari pelanggan</h2>
+                <p class="section-copy mx-auto">Disusun lebih ringkas agar calon pelanggan cepat paham sebelum menghubungi admin atau mengisi form booking.</p>
+            </div>
+
+            <div class="space-y-4 md:space-y-5">
                 @forelse($faqs as $faq)
-                    <div class="group bg-white rounded-[3rem] p-10 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_40px_80px_-20px_rgba(15,23,42,0.15)] transition-all duration-700 border border-slate-100 transform hover:-translate-y-2"
+                    <div class="overflow-hidden rounded-[1.75rem] border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-lg"
                         data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
-                        <div class="flex items-start gap-8">
-                            <div
-                                class="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center text-[#D4AF37] shrink-0 shadow-lg shadow-amber-900/10 group-hover:scale-110 transition-transform">
-                                <span class="text-lg font-black font-heading">?</span>
+                        <button type="button" class="flex w-full items-center justify-between gap-4 px-6 py-5 text-left md:px-8 md:py-6"
+                            @click="activeFaq = activeFaq === {{ $loop->index }} ? null : {{ $loop->index }}">
+                            <div class="flex items-start gap-4">
+                                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-amber-50 text-base font-black text-[#C9A14A]">
+                                    {{ str_pad((string) ($loop->iteration), 2, '0', STR_PAD_LEFT) }}
+                                </div>
+                                <h3 class="pt-1 text-lg font-black leading-snug tracking-tight text-[#0B0B0B] md:text-xl font-heading">
+                                    {{ $faq->question }}
+                                </h3>
                             </div>
-                            <div>
-                                <h3 class="text-xl font-black text-slate-900 mb-4 font-heading tracking-tight leading-snug">
-                                    {{ $faq->question }}</h3>
-                                <p class="text-base text-slate-500 leading-relaxed font-medium">{{ $faq->answer }}</p>
-                            </div>
+                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition-all"
+                                :class="activeFaq === {{ $loop->index }} ? 'rotate-45 bg-amber-50 text-[#C9A14A]' : ''">+</span>
+                        </button>
+                        <div x-show="activeFaq === {{ $loop->index }}" x-transition.opacity.duration.200ms class="border-t border-slate-100 px-6 py-5 text-sm leading-7 text-slate-500 md:px-8 md:text-base">
+                            {{ $faq->answer }}
                         </div>
                     </div>
                 @empty
-                    <div class="text-center py-20" data-aos="fade-up">
+                    <div class="page-empty-state" data-aos="fade-up">
                         <div
                             class="w-24 h-24 bg-slate-100 rounded-[2.5rem] flex items-center justify-center text-slate-300 mx-auto mb-8">
-                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                                </path>
-                            </svg>
+                            <i class="fa-solid fa-circle-question text-slate-300 text-5xl"></i>
                         </div>
                         <h4 class="text-2xl font-black text-slate-900 mb-4">Belum ada pertanyaan</h4>
-                        <p class="text-slate-400 font-medium">Silakan hubungi konserge kami untuk bantuan lebih lanjut.</p>
+                        <p class="text-slate-400 font-medium">Silakan hubungi admin kami untuk bantuan lebih lanjut.</p>
                     </div>
                 @endforelse
             </div>
         </div>
     </section>
-
-    <style>
-        .shadow-4xl {
-            box-shadow: 0 40px 100px -20px rgba(212, 175, 55, 0.15);
-        }
-    </style>
 @endsection
+

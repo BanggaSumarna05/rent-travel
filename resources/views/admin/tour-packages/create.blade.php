@@ -179,9 +179,10 @@
                                         d="M12 4v16m8-8H4"></path>
                                 </svg>
                             </div>
-                            <p class="text-sm font-black text-slate-800 uppercase tracking-widest mb-2">Pilih Foto Paket
+                            <p class="text-[10px] font-black text-slate-800 uppercase tracking-widest mb-2">Pilih Foto Paket
                             </p>
-                            <p class="text-xs font-bold text-slate-400">Pilih beberapa foto terbaik destinasi</p>
+                            <p class="text-xs font-bold text-slate-400 mb-1">Pilih beberapa foto terbaik destinasi</p>
+                            <p class="text-[9px] font-bold text-slate-400 italic">JPG/PNG (Max 2MB)</p>
                         </div>
                     </div>
                     @error('images.*')

@@ -17,6 +17,7 @@ class Motorcycle extends Model implements HasMedia
         'brand',
         'slug',
         'price_per_day',
+        'price_per_month',
         'engine_capacity',
         'description',
         'status',
@@ -24,6 +25,7 @@ class Motorcycle extends Model implements HasMedia
 
     protected $casts = [
         'price_per_day' => 'decimal:2',
+        'price_per_month' => 'decimal:2',
     ];
 
     public function sluggable(): array
