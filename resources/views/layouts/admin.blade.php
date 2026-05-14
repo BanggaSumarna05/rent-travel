@@ -118,7 +118,8 @@
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 lg:gap-4 group">
                 <div
                     class="w-10 h-10 lg:w-12 lg:h-12 bg-slate-900 rounded-xl lg:rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/10 group-hover:scale-105 transition-transform overflow-hidden border border-white/10">
-                    <img src="{{ asset('logo.jpg') }}" alt="{{ \App\Models\Setting::get('site_name', 'Rent Travel') }}"
+                    <img src="{{ \App\Models\Setting::get('site_logo', asset('logo.jpg')) }}"
+                        alt="{{ \App\Models\Setting::get('site_name', 'Rent Travel') }}"
                         class="w-full h-full object-contain p-1">
                 </div>
                 <div>
